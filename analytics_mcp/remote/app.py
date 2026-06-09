@@ -188,7 +188,17 @@ def main() -> None:
             "GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET / JWT_SECRET not fully set; "
             "OAuth endpoints will fail until configured."
         )
-    uvicorn.run(create_app(cfg), host="0.0.0.0", port=cfg.port)
+    # Trust the reverse proxy's X-Forwarded-Proto/For so the app sees the
+    # original https scheme and client IP (otherwise redirects downgrade to
+    # http and rate limiting sees the proxy's IP). The container is only
+    # reachable via the trusted proxy on the internal network.
+    uvicorn.run(
+        create_app(cfg),
+        host="0.0.0.0",
+        port=cfg.port,
+        proxy_headers=True,
+        forwarded_allow_ips="*",
+    )
 
 
 if __name__ == "__main__":
