@@ -14,6 +14,8 @@ dependencies = [
     "mcp>=1.24.0",
     "google-adk>=1.29.0",
     "httpx>=0.28.1",
+    "starlette>=0.40",
+    "uvicorn>=0.30",
 ]
 keywords = ["google analytics", "analytics", "mcp", "ga4"]
 classifiers = [
@@ -42,11 +44,14 @@ issues = "https://github.com/googleanalytics/google-analytics-mcp/issues"
 
 [project.scripts]
 analytics-mcp = "analytics_mcp.server:run_server"
-# The previous name of the script. Kept for backwards compatibility.
 google-analytics-mcp = "analytics_mcp.server:run_server"
+analytics-mcp-http = "analytics_mcp.remote.app:main"
 
 [project.optional-dependencies]
-dev = ["black", "nox >=2026.2.9, <2027"]
+dev = ["black", "nox >=2026.2.9, <2027", "pytest>=8", "pytest-asyncio>=0.24", "respx>=0.21"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
 
 [build-system]
 requires = ["setuptools>=82.0.0", "wheel"]

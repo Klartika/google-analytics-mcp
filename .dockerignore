@@ -1,0 +1,14 @@
+.git
+.github
+tests
+noxfile.py
+**/__pycache__
+*.pyc
+*.pyo
+.venv
+venv
+DEPLOY.md
+docker-compose.yml
+Caddyfile
+*.json
+!skills-lock.json

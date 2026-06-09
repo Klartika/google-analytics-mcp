@@ -47,6 +47,9 @@ pip-log.txt
 docs/_build
 docs.metadata
 
+# Internal planning/design docs — kept local, never published
+docs/superpowers/
+
 # Virtual environment
 env/
 venv/
@@ -67,3 +70,5 @@ pylintrc
 pylintrc.test
 
 .agents/skills
+# uv lockfile — local dev artifact (upstream uses pip/nox)
+uv.lock
