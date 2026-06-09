@@ -47,6 +47,9 @@ pip-log.txt
 docs/_build
 docs.metadata
 
+# Internal planning/design docs — kept local, never published
+docs/superpowers/
+
 # Virtual environment
 env/
 venv/
