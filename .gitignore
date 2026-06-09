@@ -70,3 +70,5 @@ pylintrc
 pylintrc.test
 
 .agents/skills
+# uv lockfile — local dev artifact (upstream uses pip/nox)
+uv.lock
