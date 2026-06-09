@@ -1,0 +1,53 @@
+# Remote GA4 MCP server for Portainer (Git stack), mirroring the GTM fork.
+#
+# Deploy: Portainer -> Stacks -> Add stack -> Repository, point at your fork,
+# compose path = docker-compose.portainer.yml, set the env vars below in the
+# stack's Environment section, enable GitOps auto-update.
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mcp-google-analytics
+    restart: unless-stopped
+
+    environment:
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      JWT_SECRET: ${JWT_SECRET}
+      BASE_URL: ${BASE_URL}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-mcp-google-analytics:8080}
+      # Set ALLOWED_GOOGLE_DOMAINS in the Portainer stack environment, never in
+      # this (public) repo. Empty => open mode; set it to restrict sign-in.
+      ALLOWED_GOOGLE_DOMAINS: ${ALLOWED_GOOGLE_DOMAINS:-}
+      ALLOWED_EMAILS: ${ALLOWED_EMAILS:-}
+      TRUST_PROXY: ${TRUST_PROXY:-true}
+      TOKEN_DB_PATH: /data/tokens.db
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+
+    volumes:
+      - mcp_ga_data:/data
+
+    networks:
+      - docker_bridge
+
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  mcp_ga_data:
+
+networks:
+  docker_bridge:
+    external: true
