@@ -16,6 +16,13 @@ Join the discussion and ask questions in the
 [🤖-analytics-mcp channel](https://discord.com/channels/971845904002871346/1398002598665257060)
 on Discord.
 
+> **This fork** adds an optional **remote, OAuth-protected HTTP transport** so the
+> server can be self-hosted and each user authenticates with their own Google
+> account (no service accounts). The upstream tool code below is unchanged. See
+> [`AGENTS.md`](AGENTS.md) for architecture and maintenance, and
+> [`DEPLOY.md`](DEPLOY.md) for deployment. The original local (stdio) usage
+> documented here continues to work as-is.
+
 ## Tools 🛠️
 
 The server uses the
