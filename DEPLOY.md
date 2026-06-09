@@ -60,6 +60,7 @@ In the stack's **Environment** section, set at minimum:
 | `BASE_URL` | Your public HTTPS URL, e.g. `https://<your-host>` |
 | `ALLOWED_GOOGLE_DOMAINS` | Comma-separated Google Workspace domains (e.g. `example.com`). Leave empty for open mode (not recommended). |
 | `ALLOWED_EMAILS` | Optional comma-separated emails outside the domain list |
+| `ACCESS_TOKEN_TTL_SECONDS` | Access-token lifetime in seconds (default `86400` = 24 h) |
 | `TRUST_PROXY` | `true` when behind NPM (enables `X-Forwarded-For` for rate limiting) |
 | `LOG_LEVEL` | `info` (default) or `debug` |
 

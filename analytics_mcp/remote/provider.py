@@ -18,7 +18,6 @@ from analytics_mcp.remote.config import Config
 from analytics_mcp.remote.store import TokenStore
 
 _STATE_TTL = 600
-_CODE_TTL = 600
 
 
 class GoogleMCPProvider(OAuthAuthorizationServerProvider):

@@ -6,6 +6,7 @@ import secrets
 import time
 from urllib.parse import urlencode
 
+import httpx
 import uvicorn
 from mcp.server.auth.middleware.auth_context import (
     AuthContextMiddleware,
@@ -89,8 +90,15 @@ def create_app(cfg: Config) -> Starlette:
         st = store.pop_state(state) if state else None
         if not code or st is None:
             return PlainTextResponse("Invalid or expired state", status_code=400)
-        tokens = await google.exchange_code(cfg, code)
-        userinfo = await google.fetch_userinfo(tokens["access_token"])
+        try:
+            tokens = await google.exchange_code(cfg, code)
+            userinfo = await google.fetch_userinfo(tokens["access_token"])
+        except httpx.HTTPError as exc:
+            log.warning("google oauth exchange failed: %s", type(exc).__name__)
+            return PlainTextResponse("Upstream Google OAuth error", status_code=502)
+        except Exception as exc:
+            log.warning("google oauth exchange failed: %s", type(exc).__name__)
+            return PlainTextResponse("Upstream Google OAuth error", status_code=502)
         if not allowlist.identity_allowed(
             cfg,
             userinfo.get("email"),
