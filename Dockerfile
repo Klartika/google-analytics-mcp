@@ -19,9 +19,17 @@ COPY analytics_mcp ./analytics_mcp
 
 RUN pip install .
 
-# Run as a non-root user.
-RUN useradd --create-home --uid 10001 appuser
+# Run as a non-root user. Pre-create the token-DB directory owned by that user:
+# a freshly-created Docker named volume inherits this ownership, so the non-root
+# process can write the SQLite DB (TOKEN_DB_PATH defaults to /data/tokens.db).
+RUN useradd --create-home --uid 10001 appuser \
+    && mkdir -p /data \
+    && chown appuser:appuser /data
+
 USER appuser
+
+# Persisted token store (mount a volume here in production).
+VOLUME ["/data"]
 
 EXPOSE 8080
 
