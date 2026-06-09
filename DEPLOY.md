@@ -85,9 +85,33 @@ docker network create docker_bridge
    - **Scheme:** `http`
    - **Forward Hostname/IP:** `mcp-google-analytics`
    - **Forward Port:** `8080`
-2. Enable **SSL** (Let's Encrypt or your own certificate).
+   - **Websockets Support:** ON
+2. Enable **SSL** (Let's Encrypt or your own certificate), and **Force SSL**.
 3. Set `BASE_URL=https://<your-host>` in the Portainer stack environment (the
    value must match the public URL exactly, without a trailing slash).
+4. Set `TRUST_PROXY=true` in the stack environment, and make sure the proxy
+   forwards `X-Forwarded-Proto` (in NPM "advanced"/enhanced builds, enable
+   **"trust upstream forwarded proto headers"**). The app trusts these headers
+   (uvicorn `proxy_headers`), so it sees the original `https` scheme. Without
+   this, the `/mcp` → `/mcp/` redirect downgrades to `http://` and the Claude
+   handshake breaks.
+5. **Streaming (SSE):** MCP responses are streamed as `text/event-stream`. If
+   tool calls hang, disable proxy buffering and raise the read timeout. In
+   vanilla NPM, paste into the proxy host **Advanced → Custom Nginx
+   Configuration**:
+   ```nginx
+   proxy_buffering off;
+   proxy_read_timeout 3600s;
+   ```
+
+> **Note on the `/mcp` redirect:** a request to `/mcp` returns a `307` redirect
+> to `/mcp/`; MCP clients (including Claude) follow it automatically. This is
+> expected — just ensure the scheme stays `https` (step 4).
+
+> **Cloudflare note:** if your domain is proxied through Cloudflare (orange
+> cloud), the proxy can buffer SSE and impose request timeouts that interfere
+> with streaming, and Let's Encrypt HTTP-01 challenges must reach NPM. For the
+> simplest setup, set this subdomain to **DNS-only (grey cloud)**.
 
 ---
 
