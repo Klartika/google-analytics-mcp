@@ -152,8 +152,9 @@ list` / `gh pr create` resolve to *upstream*, not here. Always pass
   interim docs commit earns its keep.
 
 **Where the repo uses milestones, the milestone title carries the order** — a two-digit
-sort prefix (`01 Eval Harness`), zero-padded, or `10` sorts before `2`. GitHub can only
-sort milestones by title, due date or completion, and we set no due dates, so the title
-is the only place ordering can live without inventing dates that go stale. Standing
-buckets outside the build sequence take a `~ ` prefix and sort last. Reordering means
-renumbering the affected titles in the same turn.
+sort prefix and a middot: `01 · Eval Harness`. Zero-pad, or `10` sorts before `2`. GitHub
+can only sort milestones by title, due date or completion, and we set no due dates, so
+the title is the only place ordering can live without inventing dates that go stale.
+Standing buckets outside the build sequence take a `~ ` prefix and no number
+(`~ Public Readiness`); they sort last and claim no place in the sequence. Reordering
+means renumbering the affected titles in the same turn.
