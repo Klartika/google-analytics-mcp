@@ -22,8 +22,7 @@ class TokenStore:
 
     def _create_tables(self) -> None:
         with self._conn:
-            self._conn.executescript(
-                """
+            self._conn.executescript("""
                 CREATE TABLE IF NOT EXISTS clients (
                     client_id TEXT PRIMARY KEY,
                     data TEXT NOT NULL
@@ -51,8 +50,7 @@ class TokenStore:
                 );
                 CREATE INDEX IF NOT EXISTS idx_tokens_refresh
                     ON tokens(refresh_token);
-                """
-            )
+                """)
 
     # --- clients ---
     def save_client(self, client: OAuthClientInformationFull) -> None:
@@ -72,15 +70,31 @@ class TokenStore:
         return OAuthClientInformationFull.model_validate_json(row["data"])
 
     # --- states ---
-    def save_state(self, *, state, client_id, redirect_uri,
-                   redirect_uri_provided_explicitly, code_challenge, scopes,
-                   resource, expires_at) -> None:
+    def save_state(
+        self,
+        *,
+        state,
+        client_id,
+        redirect_uri,
+        redirect_uri_provided_explicitly,
+        code_challenge,
+        scopes,
+        resource,
+        expires_at,
+    ) -> None:
         with self._lock, self._conn:
             self._conn.execute(
                 "INSERT OR REPLACE INTO states VALUES (?,?,?,?,?,?,?,?)",
-                (state, client_id, redirect_uri,
-                 int(redirect_uri_provided_explicitly), code_challenge,
-                 json.dumps(scopes), resource, expires_at),
+                (
+                    state,
+                    client_id,
+                    redirect_uri,
+                    int(redirect_uri_provided_explicitly),
+                    code_challenge,
+                    json.dumps(scopes),
+                    resource,
+                    expires_at,
+                ),
             )
 
     def pop_state(self, state: str):
@@ -105,17 +119,39 @@ class TokenStore:
         }
 
     # --- auth codes ---
-    def save_auth_code(self, *, code, client_id, redirect_uri,
-                       redirect_uri_provided_explicitly, code_challenge, scopes,
-                       resource, subject, google_access, google_refresh,
-                       google_expiry, expires_at) -> None:
+    def save_auth_code(
+        self,
+        *,
+        code,
+        client_id,
+        redirect_uri,
+        redirect_uri_provided_explicitly,
+        code_challenge,
+        scopes,
+        resource,
+        subject,
+        google_access,
+        google_refresh,
+        google_expiry,
+        expires_at,
+    ) -> None:
         with self._lock, self._conn:
             self._conn.execute(
                 "INSERT OR REPLACE INTO auth_codes VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
-                (code, client_id, redirect_uri,
-                 int(redirect_uri_provided_explicitly), code_challenge,
-                 json.dumps(scopes), resource, subject, google_access,
-                 google_refresh, google_expiry, expires_at),
+                (
+                    code,
+                    client_id,
+                    redirect_uri,
+                    int(redirect_uri_provided_explicitly),
+                    code_challenge,
+                    json.dumps(scopes),
+                    resource,
+                    subject,
+                    google_access,
+                    google_refresh,
+                    google_expiry,
+                    expires_at,
+                ),
             )
 
     def get_auth_code(self, code: str):
@@ -137,14 +173,33 @@ class TokenStore:
             self._conn.execute("DELETE FROM auth_codes WHERE code = ?", (code,))
 
     # --- tokens ---
-    def save_token(self, *, access_token, refresh_token, client_id, scopes,
-                   expires_at, google_access, google_refresh, google_expiry,
-                   subject) -> None:
+    def save_token(
+        self,
+        *,
+        access_token,
+        refresh_token,
+        client_id,
+        scopes,
+        expires_at,
+        google_access,
+        google_refresh,
+        google_expiry,
+        subject,
+    ) -> None:
         with self._lock, self._conn:
             self._conn.execute(
                 "INSERT OR REPLACE INTO tokens VALUES (?,?,?,?,?,?,?,?,?)",
-                (access_token, refresh_token, client_id, json.dumps(scopes),
-                 expires_at, google_access, google_refresh, google_expiry, subject),
+                (
+                    access_token,
+                    refresh_token,
+                    client_id,
+                    json.dumps(scopes),
+                    expires_at,
+                    google_access,
+                    google_refresh,
+                    google_expiry,
+                    subject,
+                ),
             )
 
     def _token_row(self, where: str, value: str):
@@ -171,9 +226,17 @@ class TokenStore:
             )
             self._conn.execute(
                 "INSERT OR REPLACE INTO tokens VALUES (?,?,?,?,?,?,?,?,?)",
-                (new["access_token"], new["refresh_token"], new["client_id"],
-                 json.dumps(new["scopes"]), new["expires_at"], new["google_access"],
-                 new["google_refresh"], new["google_expiry"], new["subject"]),
+                (
+                    new["access_token"],
+                    new["refresh_token"],
+                    new["client_id"],
+                    json.dumps(new["scopes"]),
+                    new["expires_at"],
+                    new["google_access"],
+                    new["google_refresh"],
+                    new["google_expiry"],
+                    new["subject"],
+                ),
             )
 
     def delete_by_token(self, token: str) -> None:
@@ -186,5 +249,9 @@ class TokenStore:
     def purge_expired(self) -> None:
         now = time.time()
         with self._lock, self._conn:
-            self._conn.execute("DELETE FROM states WHERE expires_at < ?", (now,))
-            self._conn.execute("DELETE FROM auth_codes WHERE expires_at < ?", (now,))
+            self._conn.execute(
+                "DELETE FROM states WHERE expires_at < ?", (now,)
+            )
+            self._conn.execute(
+                "DELETE FROM auth_codes WHERE expires_at < ?", (now,)
+            )

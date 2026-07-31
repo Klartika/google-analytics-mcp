@@ -6,10 +6,17 @@ from analytics_mcp.remote.config import Config
 
 def _cfg(emails=None, domains=None):
     return Config(
-        port=8080, base_url="https://x", google_client_id="", google_client_secret="",
-        jwt_secret="", allowed_hosts=[], allowed_emails=emails or set(),
+        port=8080,
+        base_url="https://x",
+        google_client_id="",
+        google_client_secret="",
+        jwt_secret="",
+        allowed_hosts=[],
+        allowed_emails=emails or set(),
         allowed_google_domains=domains or set(),
-        access_token_ttl=timedelta(hours=24), trust_proxy=False, log_level="info",
+        access_token_ttl=timedelta(hours=24),
+        trust_proxy=False,
+        log_level="info",
         token_db_path=":memory:",
     )
 

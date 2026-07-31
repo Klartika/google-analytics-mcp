@@ -22,14 +22,21 @@ from mcp.server.auth.routes import (
     create_auth_routes,
     create_protected_resource_routes,
 )
-from mcp.server.auth.settings import ClientRegistrationOptions, RevocationOptions
+from mcp.server.auth.settings import (
+    ClientRegistrationOptions,
+    RevocationOptions,
+)
 from mcp.server.streamable_http_manager import StreamableHTTPSessionManager
 from pydantic import AnyHttpUrl
 from starlette.applications import Starlette
 from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.requests import Request
-from starlette.responses import JSONResponse, PlainTextResponse, RedirectResponse
+from starlette.responses import (
+    JSONResponse,
+    PlainTextResponse,
+    RedirectResponse,
+)
 from starlette.routing import Mount, Route
 
 import analytics_mcp.coordinator as coordinator
@@ -53,7 +60,10 @@ def create_app(cfg: Config) -> Starlette:
     issuer = AnyHttpUrl(cfg.base_url)
 
     session_manager = StreamableHTTPSessionManager(
-        app=coordinator.app, event_store=None, json_response=False, stateless=True
+        app=coordinator.app,
+        event_store=None,
+        json_response=False,
+        stateless=True,
     )
 
     # --- credential-injecting ASGI wrapper for the MCP endpoint ---
@@ -89,16 +99,22 @@ def create_app(cfg: Config) -> Starlette:
         state = request.query_params.get("state")
         st = store.pop_state(state) if state else None
         if not code or st is None:
-            return PlainTextResponse("Invalid or expired state", status_code=400)
+            return PlainTextResponse(
+                "Invalid or expired state", status_code=400
+            )
         try:
             tokens = await google.exchange_code(cfg, code)
             userinfo = await google.fetch_userinfo(tokens["access_token"])
         except httpx.HTTPError as exc:
             log.warning("google oauth exchange failed: %s", type(exc).__name__)
-            return PlainTextResponse("Upstream Google OAuth error", status_code=502)
+            return PlainTextResponse(
+                "Upstream Google OAuth error", status_code=502
+            )
         except Exception as exc:
             log.warning("google oauth exchange failed: %s", type(exc).__name__)
-            return PlainTextResponse("Upstream Google OAuth error", status_code=502)
+            return PlainTextResponse(
+                "Upstream Google OAuth error", status_code=502
+            )
         if not allowlist.identity_allowed(
             cfg,
             userinfo.get("email"),
@@ -115,7 +131,9 @@ def create_app(cfg: Config) -> Starlette:
             code=our_code,
             client_id=st["client_id"],
             redirect_uri=st["redirect_uri"],
-            redirect_uri_provided_explicitly=st["redirect_uri_provided_explicitly"],
+            redirect_uri_provided_explicitly=st[
+                "redirect_uri_provided_explicitly"
+            ],
             code_challenge=st["code_challenge"],
             scopes=st["scopes"],
             resource=st["resource"],
@@ -126,8 +144,10 @@ def create_app(cfg: Config) -> Starlette:
             expires_at=time.time() + _CODE_TTL,
         )
         sep = "&" if "?" in st["redirect_uri"] else "?"
-        location = st["redirect_uri"] + sep + urlencode(
-            {"code": our_code, "state": state}
+        location = (
+            st["redirect_uri"]
+            + sep
+            + urlencode({"code": our_code, "state": state})
         )
         return RedirectResponse(location, status_code=302)
 
@@ -159,7 +179,12 @@ def create_app(cfg: Config) -> Starlette:
     middleware = [
         Middleware(
             RateLimitMiddleware,
-            limited_prefixes=("/authorize", "/oauth/callback", "/token", "/register"),
+            limited_prefixes=(
+                "/authorize",
+                "/oauth/callback",
+                "/token",
+                "/register",
+            ),
             rate=5,
             burst=15,
             max_body_bytes=1 << 20,
@@ -183,7 +208,9 @@ def create_app(cfg: Config) -> Starlette:
 def main() -> None:
     logging.basicConfig(level=logging.INFO)
     cfg = load_config()
-    if not (cfg.google_client_id and cfg.google_client_secret and cfg.jwt_secret):
+    if not (
+        cfg.google_client_id and cfg.google_client_secret and cfg.jwt_secret
+    ):
         log.warning(
             "GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET / JWT_SECRET not fully set; "
             "OAuth endpoints will fail until configured."

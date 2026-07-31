@@ -5,9 +5,18 @@ from analytics_mcp.remote import config as config_mod
 
 def _load(monkeypatch, **env):
     for key in [
-        "PORT", "BASE_URL", "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "JWT_SECRET",
-        "ALLOWED_HOSTS", "ALLOWED_EMAILS", "ALLOWED_GOOGLE_DOMAINS",
-        "ACCESS_TOKEN_TTL_SECONDS", "TRUST_PROXY", "LOG_LEVEL", "TOKEN_DB_PATH",
+        "PORT",
+        "BASE_URL",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET",
+        "JWT_SECRET",
+        "ALLOWED_HOSTS",
+        "ALLOWED_EMAILS",
+        "ALLOWED_GOOGLE_DOMAINS",
+        "ACCESS_TOKEN_TTL_SECONDS",
+        "TRUST_PROXY",
+        "LOG_LEVEL",
+        "TOKEN_DB_PATH",
     ]:
         monkeypatch.delenv(key, raising=False)
     for key, value in env.items():
