@@ -125,6 +125,10 @@ See [`DEPLOY.md`](DEPLOY.md). Key operational gotchas already encoded there:
 GitHub issues are the authoritative tracker for individual work items. Work with them
 continuously, without being asked.
 
+This repo is a **fork** of `googleanalytics/google-analytics-mcp`, so bare `gh issue
+list` / `gh pr create` resolve to *upstream*, not here. Always pass
+`--repo Klartika/google-analytics-mcp` — upstream's issue tracker is Google's, not ours.
+
 - **One issue per deferred item**, assigned to a milestone where the repo uses them. If
   it isn't an issue, it isn't tracked — never keep a parallel list in a doc or in memory.
 - **Write issues to stand alone**: the evidence, the ground truth you verified, and the
