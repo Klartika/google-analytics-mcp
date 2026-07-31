@@ -139,6 +139,21 @@ list` / `gh pr create` resolve to *upstream*, not here. Always pass
 - **Check for staleness proactively**, especially issues predating recent decisions.
   Prefer a **dated update comment** over rewriting the body — the original framing plus
   an update is more useful than a silently edited issue.
-- **Docs ship with the work.** Any doc whose claims a PR changes is updated in that PR,
-  not a follow-up. Verify doc claims against ground truth (code, data, computed output) —
-  never against another doc, since both can be stale.
+
+**The two cadences are different, and deliberately so.**
+
+- **Keep GitHub aligned at all times.** The tracker is the live state: open, update and
+  close issues as the work happens, not batched at the end of a session. A decision that
+  changes an issue, a milestone or the order is reflected the moment it is made.
+- **Docs are aligned at PR time** — in the PR that changes what they claim, never
+  continuously and never in a follow-up. Verify their claims against ground truth (code,
+  data, computed output), never against another doc, since both can be stale. The one
+  exception is a build phase long enough that the docs would be wrong for days, where an
+  interim docs commit earns its keep.
+
+**Where the repo uses milestones, the milestone title carries the order** — a two-digit
+sort prefix (`01 Eval Harness`), zero-padded, or `10` sorts before `2`. GitHub can only
+sort milestones by title, due date or completion, and we set no due dates, so the title
+is the only place ordering can live without inventing dates that go stale. Standing
+buckets outside the build sequence take a `~ ` prefix and sort last. Reordering means
+renumbering the affected titles in the same turn.
