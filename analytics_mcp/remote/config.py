@@ -43,11 +43,14 @@ def load() -> Config:
         jwt_secret=os.getenv("JWT_SECRET", ""),
         allowed_hosts=_csv_list(os.getenv("ALLOWED_HOSTS", "")),
         allowed_emails=_csv_set(os.getenv("ALLOWED_EMAILS", "")),
-        allowed_google_domains=_csv_set(os.getenv("ALLOWED_GOOGLE_DOMAINS", "")),
+        allowed_google_domains=_csv_set(
+            os.getenv("ALLOWED_GOOGLE_DOMAINS", "")
+        ),
         access_token_ttl=timedelta(
             seconds=int(os.getenv("ACCESS_TOKEN_TTL_SECONDS", "86400"))
         ),
-        trust_proxy=os.getenv("TRUST_PROXY", "false").lower() in ("1", "true", "yes"),
+        trust_proxy=os.getenv("TRUST_PROXY", "false").lower()
+        in ("1", "true", "yes"),
         log_level=os.getenv("LOG_LEVEL", "info"),
         token_db_path=os.getenv("TOKEN_DB_PATH", "/data/tokens.db"),
     )

@@ -35,6 +35,12 @@ FREEZE_COMMAND = ["python", "-m", "pip", "freeze"]
 TEST_DEPENDENCIES = [
     "pyfakefs>=5.0.0,<6.0",
     "coverage==6.5.0",
+    # tests/remote/ imports these directly; the nox session builds its own venv,
+    # so the workflow's `pip install -e .[dev]` does not reach it. Keep in sync
+    # with the `dev` extra in pyproject.toml.
+    "pytest>=8",
+    "pytest-asyncio>=0.24",
+    "respx>=0.21",
 ]
 
 

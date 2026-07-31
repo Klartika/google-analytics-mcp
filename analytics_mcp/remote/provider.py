@@ -25,10 +25,14 @@ class GoogleMCPProvider(OAuthAuthorizationServerProvider):
         self.cfg = cfg
         self.store = store
 
-    async def get_client(self, client_id: str) -> Optional[OAuthClientInformationFull]:
+    async def get_client(
+        self, client_id: str
+    ) -> Optional[OAuthClientInformationFull]:
         return self.store.get_client(client_id)
 
-    async def register_client(self, client_info: OAuthClientInformationFull) -> None:
+    async def register_client(
+        self, client_info: OAuthClientInformationFull
+    ) -> None:
         self.store.save_client(client_info)
 
     async def authorize(
@@ -62,13 +66,17 @@ class GoogleMCPProvider(OAuthAuthorizationServerProvider):
             client_id=row["client_id"],
             code_challenge=row["code_challenge"],
             redirect_uri=row["redirect_uri"],
-            redirect_uri_provided_explicitly=row["redirect_uri_provided_explicitly"],
+            redirect_uri_provided_explicitly=row[
+                "redirect_uri_provided_explicitly"
+            ],
             resource=row["resource"],
             subject=row["subject"],
         )
 
     async def exchange_authorization_code(
-        self, client: OAuthClientInformationFull, authorization_code: AuthorizationCode
+        self,
+        client: OAuthClientInformationFull,
+        authorization_code: AuthorizationCode,
     ) -> OAuthToken:
         row = self.store.get_auth_code(authorization_code.code)
         if row is None:

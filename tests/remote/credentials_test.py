@@ -6,7 +6,9 @@ from analytics_mcp.remote import credentials
 
 def test_patch_falls_back_to_adc_when_unset(monkeypatch):
     sentinel = object()
-    monkeypatch.setattr(credentials, "_original_get_credentials", lambda: sentinel)
+    monkeypatch.setattr(
+        credentials, "_original_get_credentials", lambda: sentinel
+    )
     credentials.apply_patch()
     assert client_mod._get_credentials() is sentinel
 
