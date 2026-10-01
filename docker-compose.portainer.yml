@@ -30,7 +30,7 @@ services:
       - mcp_ga_data:/data
 
     networks:
-      - docker_bridge
+      - npm_mcp_ga4
 
     healthcheck:
       # The python:slim base image has no wget/curl; use Python's stdlib urllib
@@ -51,5 +51,7 @@ volumes:
   mcp_ga_data:
 
 networks:
-  docker_bridge:
+  # Shared with NPM ONLY (Klartika fleet-ops PLAN 11.124; created by fleet-ops networks.sh).
+  # Was the flat docker_bridge until 2026-10-01. Not internal: this container's only route out.
+  npm_mcp_ga4:
     external: true
