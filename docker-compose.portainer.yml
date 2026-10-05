@@ -10,6 +10,10 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: mcp-google-analytics
+    # Memory ceiling (fleet-ops PLAN 11.128): 1.5x the measured all-inclusive peak, swap off
+    # (memswap_limit = mem_limit), so one runaway cannot take orion.
+    mem_limit: 320m
+    memswap_limit: 320m
     restart: unless-stopped
 
     environment:
